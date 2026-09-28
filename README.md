@@ -2,66 +2,35 @@
 
 A secure, desktop-based Windows Forms application built with C# and .NET for managing patient clinical records. This system focuses on security, usability, and professional data management for medical clinics.
 
-## 📸 Screenshots
-<details>
-<summary>Click to view system screenshots</summary>
-
-### System Sign In
-![Login Form](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232232.png?raw=true)
-
-### Patients Dashboard
-![Patients Dashboard](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232307.png?raw=true)
-
-### Secure Medical Record Entry
-![Secure Record Entry](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233615.png?raw=true)
-
-### PDF Export Preview
-![PDF Preview](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233522.png?raw=true)
-
-### About System
-![About System](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20234951.png?raw=true)
-
-</details>
-
-## 🚀 Features
-
-*   **Secure Authentication & Role-Based Access**
-    *   Login system with encrypted passwords (AES-256).
-    *   Differentiated access levels for **Admins** and **Doctors**.
-*   **User Management**
-    *   Admins can create, manage, and remove staff accounts.
-*   **Patient Registration**
-    *   Capture and store patient demographic data (Name, NIC, Contact, Address, Blood Group).
-*   **Encrypted Medical Records**
-    *   Doctors can add diagnoses and prescriptions.
-    *   **High Security:** All clinical data (Diagnosis and Prescription) is encrypted using AES-256 *before* being stored in the SQL Database to ensure patient privacy.
-*   **Advanced Clinical History Dashboard**
-    *   Global chronological view of all medical records.
-    *   **Real-Time Search:** Instantly filter records by typing a Patient Name or NIC.
-    *   **Sorting:** Sort by Newest First, Oldest First, or Alphabetical.
-    *   **Elegant Modal Views:** Click "View Record" to read decrypted details in a beautifully designed, scrollable popup.
-*   **Professional PDF Export**
-    *   Generate official, printable PDF reports of any clinical record with one click.
-    *   Includes automated formatting, shading, timestamps, and signature lines.
-
 ---
 
-## 🔄 User Flow
+## 🚀 Features & User Flow
 
-1.  **Launch & Login**
-    *   The user starts the application and logs in via the `LoginForm`.
-    *   Depending on their role (Admin/Doctor), they are granted access to specific modules on the `MainDashboard`.
-2.  **Patient Intake**
-    *   When a new patient arrives, staff navigates to **Register Patient** to create a profile (NIC is used as a unique identifier).
-3.  **Consultation & Records**
-    *   The Doctor navigates to **Add Record**.
-    *   They write the diagnosis and prescription. Upon saving, the system encrypts the data and stores it securely in the database.
-4.  **Reviewing History**
-    *   Staff navigates to **View History**.
-    *   They use the real-time search bar to find a specific patient by Name or NIC.
-    *   They click **"View Record"** to open the details modal. The system securely decrypts the data on-the-fly for viewing.
-5.  **Exporting Data**
-    *   From the record modal, the user clicks **"Export PDF"** to generate a professional document to print or share with the patient.
+### 1. Launch & Secure Login
+The user starts the application and logs in securely. The system features differentiated access levels for **Admins** and **Doctors**. Passwords are encrypted for safety.
+
+![Login Form](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232232.png?raw=true)
+
+### 2. Patients Dashboard
+Once logged in, staff are greeted by the main dashboard. The **Patients Dashboard** allows for real-time search (by Name or NIC), sorting, and immediate access to patient profiles and histories. 
+
+![Patients Dashboard](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232307.png?raw=true)
+
+### 3. Encrypted Medical Records
+Doctors can securely add diagnoses and prescriptions.
+**High Security:** All clinical data (Diagnosis, Prescription, and dynamic test results) is encrypted using AES-256 *before* being stored in the SQL Database to ensure maximum patient privacy.
+
+![Secure Record Entry](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233615.png?raw=true)
+
+### 4. Professional PDF Export
+Staff can click "View Record" to read decrypted details in a beautifully designed popup, and then click **Export PDF** to generate an official, printable document. The generated PDFs feature automated formatting, highlighting, timestamps, and signature lines in a signature sticky-note aesthetic.
+
+![PDF Preview](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233522.png?raw=true)
+
+### 5. System Information & UI Polish
+The application was built with a strict adherence to a modern flat UI design, doing away with outdated 3D borders for a crisp, responsive, and professional user experience. 
+
+![About System](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20234951.png?raw=true)
 
 ---
 
@@ -70,4 +39,4 @@ A secure, desktop-based Windows Forms application built with C# and .NET for man
 *   **Backend:** .NET Framework 4.8
 *   **Database:** Microsoft SQL Server (`medicaldb`)
 *   **Security:** `System.Security.Cryptography.Aes` for data encryption.
-*   **Reporting:** Built-in `System.Drawing.Printing.PrintDocument` for native PDF generation.
+*   **Reporting:** iTextSharp for robust native PDF generation.
