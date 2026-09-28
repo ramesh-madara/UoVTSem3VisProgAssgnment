@@ -4,6 +4,32 @@ A secure, desktop-based Windows Forms application built with C# and .NET for man
 
 ---
 
+## ⚙️ Setup Instructions
+
+To run this project on your local machine, please follow these steps:
+
+### 1. Prerequisites
+- **Visual Studio 2022** (or 2019) with the `.NET desktop development` workload installed.
+- **SQL Server Express** installed and running (`.\SQLEXPRESS`).
+- **SQL Server Management Studio (SSMS)** (optional, but recommended for viewing the database).
+
+### 2. Database Initialization
+1. Open SQL Server Management Studio (SSMS) and connect to your local `.\SQLEXPRESS` instance.
+2. Locate the `SQL/medicaldb.sql` file in this repository.
+3. Open `medicaldb.sql` in SSMS and click **Execute** (or press `F5`).
+4. This script will automatically create the `medicaldb` database, construct all required tables, and insert default user accounts:
+   - **Admin:** Username: `admin` | Password: `admin123`
+   - **Doctor:** Username: `doctor` | Password: `doctor123`
+5. *(Optional)* You can execute the other `.sql` scripts inside the `SQL/` folder to populate the database with sample mock data.
+
+### 3. Running the Application
+1. Open the solution file `PatientManagementSystem.sln` in Visual Studio.
+2. The project automatically references **iTextSharp** (ensure you restore NuGet packages if prompted).
+3. Press **Start** (or `F5`) to compile and launch the application.
+4. Log in using the default Admin or Doctor credentials!
+
+---
+
 ## 🚀 Features & User Flow
 
 ### 1. Launch & Secure Login
@@ -45,3 +71,16 @@ The application was built with a strict adherence to a modern flat UI design, do
 *   **Database:** Microsoft SQL Server (`medicaldb`)
 *   **Security:** `System.Security.Cryptography.Aes` for data encryption.
 *   **Reporting:** iTextSharp for robust native PDF generation.
+
+---
+
+## 👥 Group Members
+**UoVT SOF 23/24 Semester 3**  
+*Visual Programming II Group Assignment*
+
+- **SOF/23/B2/29** - Nuwan Hasanka
+- **SOF/23/B2/02** - Ramesh Madara
+- **SOF/23/B2/23** - Gihan Lavnidu
+- **SOF/23/B2/28** - Chiranthi Bhagya
+- **SOF/23/B2/20** - Suresh Indika
+- **SOF/23/B2/14** - Thisari Wijerathne

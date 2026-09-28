@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 40px; }
+  h1 { color: #2c3e50; }
+  h2 { color: #2980b9; border-bottom: 2px solid #2980b9; padding-bottom: 5px; margin-top: 30px;}
+  h3 { color: #2c3e50; margin-top: 25px; }
+  .cover { text-align: center; margin-top: 20vh; height: 80vh; page-break-after: always; }
+  .cover h1 { font-size: 3em; margin-bottom: 10px; color: #2980b9;}
+  .cover h2 { font-size: 1.8em; color: #7f8c8d; border: none; font-weight: normal; margin-top: 0;}
+  .cover .members { margin-top: 50px; font-size: 1.2em; text-align: center;}
+  .cover .members ul { list-style: none; padding: 0; display: inline-block; text-align: left; margin-top:20px;}
+  .cover .members li { margin-bottom: 10px; }
+  img { max-width: 100%; height: auto; display: block; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin: 20px 0; }
+  .page-break { page-break-before: always; }
+  code { background-color: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; }
+  
+  @media print {
+      @page { margin: 1cm; }
+      body { margin: 0; }
+      img { max-width: 100% !important; max-height: 800px !important; object-fit: contain; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Patient Management System</h1>
+  <h2>Full Technical Documentation</h2>
+  <div class="members">
+    <p><strong>UoVT SOF 23/24 Semester 3</strong><br>Visual Programming II Group Assignment</p>
+    <ul>
+      <li><strong>SOF/23/B2/29</strong> - Nuwan Hasanka</li>
+      <li><strong>SOF/23/B2/02</strong> - Ramesh Madara</li>
+      <li><strong>SOF/23/B2/23</strong> - Gihan Lavnidu</li>
+      <li><strong>SOF/23/B2/28</strong> - Chiranthi Bhagya</li>
+      <li><strong>SOF/23/B2/20</strong> - Suresh Indika</li>
+      <li><strong>SOF/23/B2/14</strong> - Thisari Wijerathne</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Overview</h2>
+<p>A secure, desktop-based Windows Forms application built with C# and .NET for managing patient clinical records. This system focuses on security, usability, and professional data management for medical clinics.</p>
+
+<h2>Features & User Flow</h2>
+
+<h3>1. Launch & Secure Login</h3>
+<p>The user starts the application and logs in securely. The system features differentiated access levels for <strong>Admins</strong> and <strong>Doctors</strong>. Passwords are encrypted for safety.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 232232.png" width="390" height="422" />
+
+<h3>2. Patients Dashboard</h3>
+<p>Once logged in, staff are greeted by the main dashboard. The <strong>Patients Dashboard</strong> allows for real-time search (by Name or NIC), sorting, and immediate access to patient profiles and histories.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 232307.png" width="600" height="344" />
+
+<div class="page-break"></div>
+
+<h3>3. Encrypted Medical Records</h3>
+<p>Doctors can securely add diagnoses and prescriptions.<br>
+<strong>High Security:</strong> All clinical data (Diagnosis, Prescription, and dynamic test results) is encrypted using AES-256 <em>before</em> being stored in the SQL Database to ensure maximum patient privacy.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 233615.png" width="600" height="344" />
+
+<h3>4. Dynamic Medical Reports</h3>
+<p>Admins can build custom report templates (e.g., Blood Tests, RT-PCR) by defining specific fields. Doctors can then select a template, and the UI will automatically generate the corresponding input fields on-the-fly. All report data is stored using an Entity-Attribute-Value (EAV) model and encrypted.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 233452.png" width="600" height="343" />
+
+<div class="page-break"></div>
+
+<h3>5. Professional PDF Export</h3>
+<p>Staff can click "View Record" to read decrypted details in a beautifully designed popup, and then click <strong>Export PDF</strong> to generate an official, printable document. The generated PDFs feature automated formatting, highlighting, timestamps, and signature lines in a signature sticky-note aesthetic.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 233522.png" width="600" height="681" />
+
+<h3>6. System Information & UI Polish</h3>
+<p>The application was built with a strict adherence to a modern flat UI design, doing away with outdated 3D borders for a crisp, responsive, and professional user experience.</p>
+<img src="../Screenshots/Screenshot 2026-09-28 234951.png" width="487" height="444" />
+
+<div class="page-break"></div>
+
+<h2>Design Guidelines</h2>
+<h3>Visual Language</h3>
+<p>The application adopts a <strong>Modern Flat UI Design</strong> built entirely in Windows Forms, departing from the classic 3D gray UI in favor of solid colors, crisp typography, and borderless elements.</p>
+
+<h3>Color Palette</h3>
+<p>The color scheme is inspired by professional medical and enterprise dashboards, heavily relying on the Flat UI color palette:</p>
+<ul>
+<li><strong>Sidebar Background:</strong> <code>#2c3e50</code> (Midnight Blue) - Grounding the navigation.</li>
+<li><strong>Main Background:</strong> <code>#ffffff</code> (White) - Keeping the data area clean and legible.</li>
+<li><strong>Primary Action / Active Tabs:</strong> <code>#2980b9</code> (Belize Hole / Bright Elegant Blue) - Used for primary actions, headers, and active tab highlights.</li>
+<li><strong>Success / Add:</strong> <code>#2ecc71</code> (Emerald) - Used for creating patients and saving records.</li>
+<li><strong>Destructive / Logout:</strong> <code>#c0392b</code> / <code>#e74c3c</code> (Alizarin) - Used for logout and deletion operations.</li>
+<li><strong>Inactive / Disabled:</strong> <code>#f0f0f0</code> (Light Gray) - Used for inactive tabs or disabled fields.</li>
+<li><strong>Text (Primary):</strong> <code>#404040</code> (Dark Gray) for readability over pure black.</li>
+<li><strong>PDF Documents:</strong> <code>#ffffcc</code> (Light Yellow) - Used for the signature "Sticky Note" aesthetic when generating PDF exports.</li>
+</ul>
+
+<h3>Component Styling</h3>
+<ul>
+<li><strong>Buttons:</strong> FlatStyle.Flat with BorderSize = 0. White foreground text.</li>
+<li><strong>Data Grids:</strong> EnableHeadersVisualStyles = false, customized header backgrounds to match the primary theme, no cell borders, alternating row colors for readability.</li>
+<li><strong>Tabs:</strong> OwnerDrawFixed custom rendering. Active tabs are highlighted in bright blue.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>Database Architecture</h2>
+<p><strong>Server:</strong> <code>.\SQLEXPRESS</code><br><strong>Database:</strong> <code>medicaldb</code></p>
+
+<h3>Schema Overview</h3>
+<ul>
+<li><strong>Users:</strong> Stores authentication and role information for system access.</li>
+<li><strong>Patients:</strong> Stores core demographic data (Name, NIC, Contact, Address, BloodGroup, Gender, Age).</li>
+<li><strong>MedicalRecords:</strong> Stores standard prescription and diagnosis records for patients. (Encrypted at rest).</li>
+<li><strong>ReportTemplates:</strong> Stores dynamic template structures for specialized medical reports.</li>
+<li><strong>TemplateFields:</strong> Stores the individual fields belonging to a specific ReportTemplate.</li>
+<li><strong>PatientReports:</strong> Stores the metadata linking a patient to a generated dynamic report.</li>
+<li><strong>ReportResults:</strong> Stores the actual values entered into the fields of a dynamic report. (Encrypted at rest).</li>
+</ul>
+
+<h2>Technology Stack</h2>
+<ul>
+<li><strong>Frontend:</strong> C# Windows Forms (WinForms)</li>
+<li><strong>Backend:</strong> .NET Framework 4.8</li>
+<li><strong>Database:</strong> Microsoft SQL Server Express</li>
+<li><strong>Data Access:</strong> ADO.NET (<code>System.Data.SqlClient</code>)</li>
+<li><strong>Cryptography:</strong> <code>System.Security.Cryptography.Aes</code> for AES-256 data encryption.</li>
+<li><strong>Reporting:</strong> iTextSharp (v5.5.13.3) for generating stylized PDF documents.</li>
+<li><strong>Iconography:</strong> Unicode Emoji Icons to maintain a lightweight footprint without external assets.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>Technical Walkthrough</h2>
+<h3>UI/UX Engine</h3>
+<p><strong>UITheme.cs:</strong> A centralized static class that recursively traverses any form passed to it. It flattens buttons, styles grids, removes borders, and enforces the global font (Segoe UI) and color palette, ensuring absolute consistency across the application.</p>
+
+<h3>Encryption Pipeline</h3>
+<p>Data strings are fed through <code>Aes.Create()</code>, written to a CryptoStream, and converted to Base64 strings for storage. When a doctor views a patient's history, the data is transparently decrypted in memory.</p>
+
+<h3>Dynamic Rendering Logic (EAV Model)</h3>
+<p>In <code>AddMedicalReportForm.cs</code>, the app queries <code>TemplateFields</code> for the selected template. A loop dynamically instantiates Label and Control (TextBox, NumericUpDown) pairs. On save, the system iterates over the dynamic controls, extracts their values, encrypts them, and saves them to the database.</p>
+
+</body>
+</html>
+
