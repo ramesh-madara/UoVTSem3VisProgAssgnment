@@ -37,6 +37,34 @@ namespace PatientManagementSystem
             tabControlRecords.Size = new Size(907, 373);
             tabControlRecords.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControlRecords.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            tabControlRecords.Padding = new Point(20, 6); // Add padding here
+            
+            // Custom Tab Coloring
+            tabControlRecords.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabControlRecords.DrawItem += (s, ev) => 
+            {
+                TabControl tab = (TabControl)s;
+                TabPage page = tab.TabPages[ev.Index];
+                Rectangle rect = tab.GetTabRect(ev.Index);
+                Graphics g = ev.Graphics;
+                
+                // Color choices
+                Color activeBackColor = Color.FromArgb(41, 128, 185); // Bright elegant blue
+                Color activeForeColor = Color.White;
+                Color inactiveBackColor = Color.FromArgb(240, 240, 240); // Light gray
+                Color inactiveForeColor = Color.FromArgb(100, 100, 100); // Darker gray
+                
+                if (ev.Index == tab.SelectedIndex)
+                {
+                    g.FillRectangle(new SolidBrush(activeBackColor), rect);
+                    TextRenderer.DrawText(g, page.Text, page.Font, rect, activeForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                }
+                else
+                {
+                    g.FillRectangle(new SolidBrush(inactiveBackColor), rect);
+                    TextRenderer.DrawText(g, page.Text, page.Font, rect, inactiveForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                }
+            };
 
             TabPage tabPrescription = new TabPage("Prescription Records");
             TabPage tabReport = new TabPage("Medical Reports");
@@ -411,121 +439,85 @@ namespace PatientManagementSystem
 
         public static void ExportToPdf(string name, string nic, string recordId, string date, string diagnosis, string prescription)
         {
-            SaveFileDialog sfd = new SaveFileDialog
-            {
-                Filter = "PDF Document|*.pdf",
-                Title = "Save Medical Record PDF",
-                FileName = string.Format("MedicalRecord_{0}_{1}.pdf", name.Replace(" ", ""), date.Replace(":", "").Replace("/", "").Replace(" ", ""))
-            };
+            string defaultFileName = string.Format("MedicalRecord_{0}_{1}.pdf", name.Replace(" ", ""), date.Replace(":", "").Replace("/", "").Replace(" ", ""));
 
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                string pContact = "", pAddress = "", pGender = "", pBlood = "";
-                try {
-                    using (SqlConnection conn = new SqlConnection("Data Source=.\\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;")) {
-                        SqlCommand cmd = new SqlCommand("SELECT ContactNumber, Address, Gender, BloodGroup FROM Patients WHERE NIC = @NIC", conn);
-                        cmd.Parameters.AddWithValue("@NIC", nic);
-                        conn.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader()) {
-                            if (reader.Read()) {
-                                pContact = reader["ContactNumber"].ToString();
-                                pAddress = reader["Address"].ToString();
-                                pGender = reader["Gender"].ToString();
-                                pBlood = reader["BloodGroup"].ToString();
-                            }
+            string pContact = "", pAddress = "", pGender = "", pBlood = "", pAge = "";
+            try {
+                using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection("Data Source=.\\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;")) {
+                    System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand("SELECT ContactNumber, Address, Gender, BloodGroup, Age FROM Patients WHERE NIC = @NIC", conn);
+                    cmd.Parameters.AddWithValue("@NIC", nic);
+                    conn.Open();
+                    using (System.Data.SqlClient.SqlDataReader reader = cmd.ExecuteReader()) {
+                        if (reader.Read()) {
+                            pContact = reader["ContactNumber"].ToString();
+                            pAddress = reader["Address"].ToString();
+                            pGender = reader["Gender"].ToString();
+                            pBlood = reader["BloodGroup"].ToString();
+                            pAge = reader["Age"].ToString();
                         }
                     }
-                } catch {}
-
-                try
-                {
-                    System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                    pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
-                    pd.PrinterSettings.PrintToFile = true;
-                    pd.PrinterSettings.PrintFileName = sfd.FileName;
-
-                    pd.PrintPage += (sender, e) => 
-                    {
-                        Graphics g = e.Graphics;
-                        int yPos = 40;
-                        int margin = 50;
-                        int width = e.PageBounds.Width - (margin * 2);
-
-                        // Fonts
-                        Font titleFont = new Font("Segoe UI", 28, FontStyle.Bold);
-                        Font subTitleFont = new Font("Segoe UI", 14, FontStyle.Bold);
-                        Font boldFont = new Font("Segoe UI", 12, FontStyle.Bold);
-                        Font regularFont = new Font("Segoe UI", 12, FontStyle.Regular);
-                        
-                        // Letterhead
-                        g.DrawString("ARA Labs", titleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 45;
-                        g.DrawString("Air Port Junction Ratmalana, Colombo", regularFont, Brushes.Gray, margin, yPos);
-                        yPos += 20;
-                        g.DrawString("Tel: 011-2345678 | Web: www.aralabs.lk", regularFont, Brushes.Gray, margin, yPos);
-                        yPos += 35;
-                        
-                        g.DrawString("OFFICIAL PATIENT CLINICAL RECORD", subTitleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 25;
-                        
-                        // Line
-                        g.DrawLine(new Pen(Color.DarkBlue, 3), margin, yPos, margin + width, yPos);
-                        yPos += 25;
-
-                        // Details Box
-                        g.FillRectangle(Brushes.WhiteSmoke, margin, yPos, width, 175);
-                        g.DrawRectangle(Pens.LightGray, margin, yPos, width, 175);
-                        
-                        yPos += 15;
-                        g.DrawString("Patient Name:  " + name, boldFont, Brushes.Black, margin + 15, yPos);
-                        g.DrawString("Gender: " + pGender + "   Blood: " + pBlood, boldFont, Brushes.DarkBlue, margin + 450, yPos);
-                        yPos += 25;
-                        g.DrawString("NIC Number:    " + nic, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Contact:       " + pContact, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Address:       " + pAddress, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Record ID:     " + recordId, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Date Created:  " + date, regularFont, Brushes.Black, margin + 15, yPos);
-                        
-                        yPos += 70;
-
-                        // Diagnosis
-                        g.DrawString("DIAGNOSIS", subTitleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 30;
-                        RectangleF diagRect = new RectangleF(margin, yPos, width, 150);
-                        g.DrawString(diagnosis, regularFont, Brushes.Black, diagRect);
-                        
-                        yPos += 170;
-
-                        // Prescription
-                        g.DrawString("PRESCRIPTION", subTitleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 30;
-                        RectangleF presRect = new RectangleF(margin, yPos, width, 150);
-                        g.DrawString(prescription, regularFont, Brushes.Black, presRect);
-
-                        yPos += 200;
-                        
-                        // Footer
-                        g.DrawLine(new Pen(Color.LightGray, 1), margin, yPos, margin + width, yPos);
-                        yPos += 15;
-                        g.DrawString("Report generated automatically by Secure Medical System on " + DateTime.Now.ToString("f"), new Font("Segoe UI", 9, FontStyle.Italic), Brushes.Gray, margin, yPos);
-                        
-                        // Signature line
-                        yPos += 60;
-                        g.DrawLine(Pens.Black, e.PageBounds.Width - margin - 200, yPos, e.PageBounds.Width - margin, yPos);
-                        g.DrawString("Authorized Signature", new Font("Segoe UI", 10), Brushes.Black, e.PageBounds.Width - margin - 180, yPos + 10);
-                    };
-
-                    pd.Print();
-                    new ToastNotification("PDF Report generated successfully!", ToastType.Success).Show();
                 }
-                catch (Exception ex)
+            } catch {}
+
+            try
+            {
+                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+                pd.DefaultPageSettings.PaperSize = new System.Drawing.Printing.PaperSize("StickyNote", 500, 500); // 5x5 inch sticky note
+
+                pd.PrintPage += (sender, e) => 
                 {
-                    new ToastNotification("Failed to create PDF. Ensure 'Microsoft Print to PDF' is available.", ToastType.Error).Show();
-                }
+                    Graphics g = e.Graphics;
+                    g.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 153)), e.PageBounds); // Light yellow background
+
+                    int yPos = 20;
+                    int margin = 20;
+                    int width = e.PageBounds.Width - (margin * 2);
+
+                    // Fonts
+                    Font titleFont = new Font("Segoe UI", 16, FontStyle.Bold);
+                    Font subTitleFont = new Font("Segoe UI", 12, FontStyle.Bold);
+                    Font boldFont = new Font("Segoe UI", 10, FontStyle.Bold);
+                    Font regularFont = new Font("Segoe UI", 10, FontStyle.Regular);
+                    
+                    // Letterhead
+                    g.DrawString("ARA Labs", titleFont, Brushes.DarkBlue, margin, yPos);
+                    yPos += 25;
+                    g.DrawString("Air Port Junction Ratmalana", regularFont, Brushes.Gray, margin, yPos);
+                    yPos += 20;
+                    
+                    g.DrawString("PRESCRIPTION RECORD", subTitleFont, Brushes.DarkBlue, margin, yPos);
+                    yPos += 25;
+                    
+                    // Line
+                    g.DrawLine(new Pen(Color.DarkBlue, 2), margin, yPos, margin + width, yPos);
+                    yPos += 15;
+
+                    g.DrawString("Patient Name:  " + name, boldFont, Brushes.Black, margin, yPos);
+                    g.DrawString("Gender: " + pGender + "   Age: " + pAge + "   Blood: " + pBlood, boldFont, Brushes.DarkBlue, margin + 200, yPos);
+                    yPos += 25;
+                    g.DrawString("NIC Number:    " + nic, regularFont, Brushes.Black, margin, yPos);
+                    yPos += 25;
+                    g.DrawString("Date:          " + date, regularFont, Brushes.Black, margin, yPos);
+                    yPos += 35;
+
+                    g.DrawString("Diagnosis:", subTitleFont, Brushes.DarkRed, margin, yPos);
+                    yPos += 25;
+                    RectangleF diagRect = new RectangleF(margin, yPos, width, 50);
+                    g.DrawString(diagnosis, regularFont, Brushes.Black, diagRect);
+                    yPos += 60;
+
+                    g.DrawString("Prescription:", subTitleFont, Brushes.DarkRed, margin, yPos);
+                    yPos += 25;
+                    RectangleF presRect = new RectangleF(margin, yPos, width, 100);
+                    g.DrawString(prescription, regularFont, Brushes.Black, presRect);
+                };
+
+                PdfPreviewModal preview = new PdfPreviewModal(pd, defaultFileName);
+                preview.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error generating preview: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

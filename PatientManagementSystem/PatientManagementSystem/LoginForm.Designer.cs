@@ -1,4 +1,4 @@
-﻿namespace PatientManagementSystem
+namespace PatientManagementSystem
 {
     partial class LoginForm
     {
@@ -144,12 +144,12 @@
             this.lblClinicName.AutoSize = true;
             this.lblClinicName.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblClinicName.ForeColor = System.Drawing.Color.White;
-            this.lblClinicName.Location = new System.Drawing.Point(16, 28);
+            this.lblClinicName.Location = new System.Drawing.Point(16, 15);
             this.lblClinicName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblClinicName.Name = "lblClinicName";
-            this.lblClinicName.Size = new System.Drawing.Size(327, 28);
+            this.lblClinicName.Size = new System.Drawing.Size(327, 56);
             this.lblClinicName.TabIndex = 0;
-            this.lblClinicName.Text = "PATIENT MANAGEMENT SYSTEM";
+            this.lblClinicName.Text = "ARA Labs\r\nPatient Management System";
             // 
             // LoginForm
             // 

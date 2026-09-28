@@ -24,23 +24,24 @@ GO
 
 CREATE TABLE [Patients] (
     [PatientId] INT IDENTITY(1,1) PRIMARY KEY,
-    [FullName] VARCHAR(100) NOT NULL,
+    [FullName] NVARCHAR(100) NOT NULL,
     [NIC] VARCHAR(20) NOT NULL UNIQUE,
     [ContactNumber] VARCHAR(20) NOT NULL,
-    [Email] VARCHAR(100) NULL,
-    [Address] VARCHAR(MAX) NULL,
-    [BloodGroup] VARCHAR(5) NULL,
-    [Gender] VARCHAR(10) NULL
+    [Email] VARCHAR(100) NOT NULL,
+    [Address] NVARCHAR(MAX) NOT NULL,
+    [BloodGroup] VARCHAR(5) NOT NULL,
+    [Gender] VARCHAR(10) NOT NULL,
+    [RegisteredDate] DATETIME DEFAULT GETDATE(),
+    [Age] INT NOT NULL DEFAULT 30
 )
 GO
 
 CREATE TABLE [MedicalRecords] (
     [RecordId] INT IDENTITY(1,1) PRIMARY KEY,
     [PatientId] INT FOREIGN KEY REFERENCES [Patients]([PatientId]),
-    [DoctorId] INT FOREIGN KEY REFERENCES [Users]([UserId]),
-    [Diagnosis] VARCHAR(MAX) NULL,
-    [Prescription] VARCHAR(MAX) NULL,
-    [Date] DATETIME DEFAULT GETDATE()
+    [Diagnosis] NVARCHAR(MAX) NOT NULL,
+    [Prescription] NVARCHAR(MAX) NOT NULL,
+    [CreatedDate] DATETIME DEFAULT GETDATE()
 )
 GO
 

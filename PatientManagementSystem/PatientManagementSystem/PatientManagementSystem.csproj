@@ -65,6 +65,9 @@
     <Compile Include="MainDashboard.Designer.cs">
       <DependentUpon>MainDashboard.cs</DependentUpon>
     </Compile>
+    <Compile Include="AboutModal.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PatientRegistrationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +86,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ReportDetailsModal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PdfPreviewModal.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

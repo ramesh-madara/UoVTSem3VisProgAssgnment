@@ -214,132 +214,122 @@ namespace PatientManagementSystem
 
         public void ExportToPdf()
         {
-            SaveFileDialog sfd = new SaveFileDialog
-            {
-                Filter = "PDF Document|*.pdf",
-                Title = "Save Medical Report PDF",
-                FileName = string.Format("{0}_Report_{1}_{2}.pdf", templateName.Replace(" ", ""), patientName.Replace(" ", ""), date.Replace(":", "").Replace("/", "").Replace(" ", ""))
-            };
+            string defaultFileName = string.Format("{0}_Report_{1}_{2}.pdf", templateName.Replace(" ", ""), patientName.Replace(" ", ""), date.Replace(":", "").Replace("/", "").Replace(" ", ""));
 
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                string pContact = "", pAddress = "", pGender = "", pBlood = "";
-                try {
-                    using (SqlConnection conn = new SqlConnection("Data Source=.\\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;")) {
-                        SqlCommand cmd = new SqlCommand("SELECT ContactNumber, Address, Gender, BloodGroup FROM Patients WHERE NIC = @NIC", conn);
-                        cmd.Parameters.AddWithValue("@NIC", this.nic);
-                        conn.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader()) {
-                            if (reader.Read()) {
-                                pContact = reader["ContactNumber"].ToString();
-                                pAddress = reader["Address"].ToString();
-                                pGender = reader["Gender"].ToString();
-                                pBlood = reader["BloodGroup"].ToString();
-                            }
+            string pContact = "", pAddress = "", pGender = "", pBlood = "", pAge = "";
+            try {
+                using (SqlConnection conn = new SqlConnection("Data Source=.\\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;")) {
+                    SqlCommand cmd = new SqlCommand("SELECT ContactNumber, Address, Gender, BloodGroup, Age FROM Patients WHERE NIC = @NIC", conn);
+                    cmd.Parameters.AddWithValue("@NIC", this.nic);
+                    conn.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader()) {
+                        if (reader.Read()) {
+                            pContact = reader["ContactNumber"].ToString();
+                            pAddress = reader["Address"].ToString();
+                            pGender = reader["Gender"].ToString();
+                            pBlood = reader["BloodGroup"].ToString();
+                            pAge = reader["Age"].ToString();
                         }
                     }
-                } catch {}
+                }
+            } catch {}
 
-                try
+            try
+            {
+                System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
+
+                pd.PrintPage += (sender, e) =>
                 {
-                    System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument();
-                    pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
-                    pd.PrinterSettings.PrintToFile = true;
-                    pd.PrinterSettings.PrintFileName = sfd.FileName;
+                    Graphics g = e.Graphics;
+                    int yPos = 40;
+                    int margin = 50;
+                    int width = e.PageBounds.Width - (margin * 2);
 
-                    pd.PrintPage += (sender, e) =>
+                    Font titleFont = new Font("Segoe UI", 28, FontStyle.Bold);
+                    Font subTitleFont = new Font("Segoe UI", 14, FontStyle.Bold);
+                    Font boldFont = new Font("Segoe UI", 12, FontStyle.Bold);
+                    Font regularFont = new Font("Segoe UI", 12, FontStyle.Regular);
+
+                    // Letterhead
+                    g.DrawString("ARA Labs", titleFont, Brushes.DarkBlue, margin, yPos);
+                    yPos += 45;
+                    g.DrawString("Air Port Junction Ratmalana, Colombo", regularFont, Brushes.Gray, margin, yPos);
+                    yPos += 20;
+                    g.DrawString("Tel: 011-2345678 | Web: www.aralabs.lk", regularFont, Brushes.Gray, margin, yPos);
+                    yPos += 35;
+                    
+                    g.DrawString("OFFICIAL REPORT: " + templateName.ToUpper(), subTitleFont, Brushes.DarkBlue, margin, yPos);
+                    yPos += 25;
+
+                    g.DrawLine(new Pen(Color.DarkBlue, 3), margin, yPos, margin + width, yPos);
+                    yPos += 25;
+
+                    // Details Box
+                    g.FillRectangle(Brushes.WhiteSmoke, margin, yPos, width, 175);
+                    g.DrawRectangle(Pens.LightGray, margin, yPos, width, 175);
+
+                    yPos += 15;
+                    g.DrawString("Patient Name:  " + patientName, boldFont, Brushes.Black, margin + 15, yPos);
+                    g.DrawString("Gender: " + pGender + "   Age: " + pAge + "   Blood: " + pBlood, boldFont, Brushes.DarkBlue, margin + 450, yPos);
+                    yPos += 25;
+                    g.DrawString("NIC Number:    " + nic, regularFont, Brushes.Black, margin + 15, yPos);
+                    yPos += 25;
+                    g.DrawString("Contact:       " + pContact, regularFont, Brushes.Black, margin + 15, yPos);
+                    yPos += 25;
+                    g.DrawString("Address:       " + pAddress, regularFont, Brushes.Black, margin + 15, yPos);
+                    yPos += 25;
+                    g.DrawString("Report ID:     " + reportId, regularFont, Brushes.Black, margin + 15, yPos);
+                    yPos += 25;
+                    g.DrawString("Date:          " + date, regularFont, Brushes.Black, margin + 15, yPos);
+                    
+                    yPos += 60;
+                    g.DrawString("TEST RESULTS", subTitleFont, Brushes.Black, margin, yPos);
+                    yPos += 30;
+
+                    // Table Header
+                    g.FillRectangle(Brushes.DarkBlue, margin, yPos, width, 30);
+                    g.DrawString("Parameter", boldFont, Brushes.White, margin + 10, yPos + 5);
+                    g.DrawString("Result", boldFont, Brushes.White, margin + 200, yPos + 5);
+                    g.DrawString("Ref Range", boldFont, Brushes.White, margin + 350, yPos + 5);
+                    g.DrawString("Flag", boldFont, Brushes.White, margin + 500, yPos + 5);
+                    yPos += 40;
+
+                    foreach (DataGridViewRow row in dgvResults.Rows)
                     {
-                        Graphics g = e.Graphics;
-                        int yPos = 40;
-                        int margin = 50;
-                        int width = e.PageBounds.Width - (margin * 2);
+                        string fName = row.Cells["Field"].Value.ToString();
+                        string res = row.Cells["Result"].Value.ToString();
+                        string unit = row.Cells["Unit"].Value.ToString();
+                        string refRange = row.Cells["RefRange"].Value.ToString();
+                        string flag = row.Cells["Flag"].Value != null ? row.Cells["Flag"].Value.ToString() : "";
 
-                        Font titleFont = new Font("Segoe UI", 28, FontStyle.Bold);
-                        Font subTitleFont = new Font("Segoe UI", 14, FontStyle.Bold);
-                        Font boldFont = new Font("Segoe UI", 12, FontStyle.Bold);
-                        Font regularFont = new Font("Segoe UI", 12, FontStyle.Regular);
-
-                        // Letterhead
-                        g.DrawString("ARA Labs", titleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 45;
-                        g.DrawString("Air Port Junction Ratmalana, Colombo", regularFont, Brushes.Gray, margin, yPos);
-                        yPos += 20;
-                        g.DrawString("Tel: 011-2345678 | Web: www.aralabs.lk", regularFont, Brushes.Gray, margin, yPos);
-                        yPos += 35;
+                        string displayResult = res + (string.IsNullOrEmpty(unit) ? "" : " " + unit);
                         
-                        g.DrawString("OFFICIAL REPORT: " + templateName.ToUpper(), subTitleFont, Brushes.DarkBlue, margin, yPos);
-                        yPos += 25;
-
-                        g.DrawLine(new Pen(Color.DarkBlue, 3), margin, yPos, margin + width, yPos);
-                        yPos += 25;
-
-                        // Details Box
-                        g.FillRectangle(Brushes.WhiteSmoke, margin, yPos, width, 175);
-                        g.DrawRectangle(Pens.LightGray, margin, yPos, width, 175);
-
-                        yPos += 15;
-                        g.DrawString("Patient Name:  " + patientName, boldFont, Brushes.Black, margin + 15, yPos);
-                        g.DrawString("Gender: " + pGender + "   Blood: " + pBlood, boldFont, Brushes.DarkBlue, margin + 450, yPos);
-                        yPos += 25;
-                        g.DrawString("NIC Number:    " + nic, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Contact:       " + pContact, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Address:       " + pAddress, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Report ID:     " + reportId, regularFont, Brushes.Black, margin + 15, yPos);
-                        yPos += 25;
-                        g.DrawString("Date:          " + date, regularFont, Brushes.Black, margin + 15, yPos);
-                        
-                        yPos += 60;
-                        g.DrawString("TEST RESULTS", subTitleFont, Brushes.Black, margin, yPos);
-                        yPos += 30;
-
-                        // Table Header
-                        g.FillRectangle(Brushes.DarkBlue, margin, yPos, width, 30);
-                        g.DrawString("Parameter", boldFont, Brushes.White, margin + 10, yPos + 5);
-                        g.DrawString("Result", boldFont, Brushes.White, margin + 200, yPos + 5);
-                        g.DrawString("Ref Range", boldFont, Brushes.White, margin + 350, yPos + 5);
-                        g.DrawString("Flag", boldFont, Brushes.White, margin + 500, yPos + 5);
-                        yPos += 40;
-
-                        foreach (DataGridViewRow row in dgvResults.Rows)
+                        Brush textBrush = Brushes.Black;
+                        if (!string.IsNullOrEmpty(flag))
                         {
-                            string fName = row.Cells["Field"].Value.ToString();
-                            string res = row.Cells["Result"].Value.ToString();
-                            string unit = row.Cells["Unit"].Value.ToString();
-                            string refRange = row.Cells["RefRange"].Value.ToString();
-                            string flag = row.Cells["Flag"].Value != null ? row.Cells["Flag"].Value.ToString() : "";
-
-                            string displayResult = res + (string.IsNullOrEmpty(unit) ? "" : " " + unit);
-                            
-                            Brush textBrush = Brushes.Black;
-                            if (!string.IsNullOrEmpty(flag))
-                            {
-                                textBrush = Brushes.Red;
-                                displayResult += " *"; // Print asterisk for abnormalities
-                            }
-
-                            g.DrawString(fName, regularFont, Brushes.Black, margin + 10, yPos);
-                            g.DrawString(displayResult, boldFont, textBrush, margin + 200, yPos);
-                            g.DrawString(refRange, regularFont, Brushes.Gray, margin + 350, yPos);
-                            g.DrawString(flag, boldFont, textBrush, margin + 500, yPos);
-                            
-                            g.DrawLine(Pens.LightGray, margin, yPos + 25, margin + width, yPos + 25);
-                            yPos += 35;
+                            textBrush = Brushes.Red;
+                            displayResult += " *"; // Print asterisk for abnormalities
                         }
 
-                        yPos += 50;
-                        g.DrawString("Authorized Signature: _______________________", regularFont, Brushes.Black, margin, yPos);
-                    };
+                        g.DrawString(fName, regularFont, Brushes.Black, margin + 10, yPos);
+                        g.DrawString(displayResult, boldFont, textBrush, margin + 200, yPos);
+                        g.DrawString(refRange, regularFont, Brushes.Gray, margin + 350, yPos);
+                        g.DrawString(flag, boldFont, textBrush, margin + 500, yPos);
+                        
+                        g.DrawLine(Pens.LightGray, margin, yPos + 25, margin + width, yPos + 25);
+                        yPos += 35;
+                    }
 
-                    pd.Print();
-                    new ToastNotification("PDF Exported Successfully!", ToastType.Success).Show();
-                }
-                catch (Exception ex)
-                {
-                    new ToastNotification("PDF Generation failed: " + ex.Message, ToastType.Error).Show();
-                }
+                    yPos += 50;
+                    g.DrawString("Authorized Signature: _______________________", regularFont, Brushes.Black, margin, yPos);
+                };
+
+                PdfPreviewModal preview = new PdfPreviewModal(pd, defaultFileName);
+                preview.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                new ToastNotification("PDF Generation failed: " + ex.Message, ToastType.Error).Show();
             }
         }
 

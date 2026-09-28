@@ -24,34 +24,81 @@ namespace PatientManagementSystem
 
             lblUserStatus.Text = string.Format("User: {0} | Role: {1}", currentUser, currentRole);
 
+            // Create Manage Templates button unconditionally
+            Button btnManageTemplates = new Button();
+            btnManageTemplates.Name = "btnManageTemplates";
+            btnManageTemplates.Text = "📝 Manage Templates";
+            btnManageTemplates.Dock = DockStyle.Top;
+            btnManageTemplates.Height = 50;
+            btnManageTemplates.FlatStyle = FlatStyle.Flat;
+            btnManageTemplates.FlatAppearance.BorderSize = 0;
+            btnManageTemplates.ForeColor = Color.White;
+            btnManageTemplates.Font = new Font("Segoe UI", 10F);
+            btnManageTemplates.TextAlign = ContentAlignment.MiddleLeft;
+            btnManageTemplates.Padding = new Padding(15, 0, 0, 0);
+            btnManageTemplates.Click += BtnManageTemplates_Click;
+            
+            pnlSidebar.Controls.Add(btnManageTemplates);
+            pnlSidebar.Controls.SetChildIndex(btnManageTemplates, 1); // Place it under Logo initially
+
             // Limit specific operations according to Roles if necessary
             if (currentRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                // Admins can register patients but cannot add medical records (medical info is doctor only)
+                // Admins can register patients but cannot add medical records
                 btnAddRecord.Enabled = false;
                 btnAddRecord.BackColor = Color.Gray;
-
-                Button btnManageTemplates = new Button();
-                btnManageTemplates.Name = "btnManageTemplates";
-                btnManageTemplates.Text = "📝 Manage Templates";
-                btnManageTemplates.Dock = DockStyle.Top;
-                btnManageTemplates.Height = 50;
-                btnManageTemplates.FlatStyle = FlatStyle.Flat;
-                btnManageTemplates.FlatAppearance.BorderSize = 0;
-                btnManageTemplates.ForeColor = Color.White;
-                btnManageTemplates.Font = new Font("Segoe UI", 10F);
-                btnManageTemplates.TextAlign = ContentAlignment.MiddleLeft;
-                btnManageTemplates.Padding = new Padding(15, 0, 0, 0);
-                btnManageTemplates.Click += BtnManageTemplates_Click;
+            }
+            else
+            {
+                // Non-admins cannot manage users
+                btnManageUsers.Enabled = false;
+                btnManageUsers.BackColor = Color.Gray;
                 
-                pnlSidebar.Controls.Add(btnManageTemplates);
-                btnManageTemplates.BringToFront();
+                // Only Admins and Doctors can view templates (Doctors can't edit, handled in child form)
+                if (!currentRole.Equals("Doctor", StringComparison.OrdinalIgnoreCase))
+                {
+                    btnManageTemplates.Enabled = false;
+                    btnManageTemplates.BackColor = Color.Gray;
+                }
+            }
+
+            // Bring all disabled buttons to the bottom of the top-docked list
+            var disabledButtons = new List<Button>();
+            foreach (Control ctrl in pnlSidebar.Controls)
+            {
+                Button b = ctrl as Button;
+                if (b != null && b.Dock == DockStyle.Top && !b.Enabled)
+                {
+                    disabledButtons.Add(b);
+                }
+            }
+            foreach (var btn in disabledButtons)
+            {
+                btn.BringToFront();
+            }
+        }
+
+        private void HighlightButton(Button clickedBtn)
+        {
+            foreach (Control ctrl in pnlSidebar.Controls)
+            {
+                Button btn = ctrl as Button;
+                if (btn != null && btn.Dock == DockStyle.Top)
+                {
+                    if (btn.Enabled)
+                        btn.BackColor = Color.FromArgb(44, 62, 80); // Default sidebar color
+                }
+            }
+            if (clickedBtn != null && clickedBtn.Enabled)
+            {
+                clickedBtn.BackColor = Color.FromArgb(52, 152, 219); // Highlight color
             }
         }
 
         private void BtnManageTemplates_Click(object sender, EventArgs e)
         {
-            ShowChildForm(new ManageReportTemplatesForm());
+            HighlightButton((Button)sender);
+            ShowChildForm(new ManageReportTemplatesForm(currentRole));
         }
 
         private void MainDashboard_Load(object sender, EventArgs e)
@@ -75,16 +122,19 @@ namespace PatientManagementSystem
 
         private void btnRegisterPatient_Click(object sender, EventArgs e)
         {
+            HighlightButton((Button)sender);
             ShowChildForm(new ManagePatientsForm());
         }
 
         private void btnAddRecord_Click(object sender, EventArgs e)
         {
+            HighlightButton((Button)sender);
             ShowChildForm(new AddMedicalRecordForm());
         }
 
         private void btnViewHistory_Click(object sender, EventArgs e)
         {
+            HighlightButton((Button)sender);
             ShowChildForm(new ViewPatientHistoryForm());
         }
         private void btnManageUsers_Click(object sender, EventArgs e)
@@ -95,6 +145,7 @@ namespace PatientManagementSystem
                                 "Access Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+            HighlightButton((Button)sender);
             ShowChildForm(new UserManagementForm());
         }
 
@@ -105,6 +156,14 @@ namespace PatientManagementSystem
             {
                 Application.Restart();
                 Environment.Exit(0);
+            }
+        }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            using (AboutModal about = new AboutModal())
+            {
+                about.ShowDialog();
             }
         }
     }

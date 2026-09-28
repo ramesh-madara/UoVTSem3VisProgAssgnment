@@ -2,6 +2,27 @@
 
 A secure, desktop-based Windows Forms application built with C# and .NET for managing patient clinical records. This system focuses on security, usability, and professional data management for medical clinics.
 
+## 📸 Screenshots
+<details>
+<summary>Click to view system screenshots</summary>
+
+### System Sign In
+![Login Form](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232232.png?raw=true)
+
+### Patients Dashboard
+![Patients Dashboard](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20232307.png?raw=true)
+
+### Secure Medical Record Entry
+![Secure Record Entry](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233615.png?raw=true)
+
+### PDF Export Preview
+![PDF Preview](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233522.png?raw=true)
+
+### About System
+![About System](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20234951.png?raw=true)
+
+</details>
+
 ## 🚀 Features
 
 *   **Secure Authentication & Role-Based Access**

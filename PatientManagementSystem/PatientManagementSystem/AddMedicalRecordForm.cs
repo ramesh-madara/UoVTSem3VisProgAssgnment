@@ -33,8 +33,36 @@ namespace PatientManagementSystem
             tabControlRecords.Font = new Font("Segoe UI", 11, FontStyle.Bold);
 
             tabControlRecords.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabControlRecords.Padding = new Point(20, 6); // Add padding here
+            
+            // Custom Tab Coloring
+            tabControlRecords.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabControlRecords.DrawItem += (s, ev) => 
+            {
+                TabControl tab = (TabControl)s;
+                TabPage page = tab.TabPages[ev.Index];
+                Rectangle rect = tab.GetTabRect(ev.Index);
+                Graphics g = ev.Graphics;
+                
+                // Color choices
+                Color activeBackColor = Color.FromArgb(41, 128, 185); // Bright elegant blue
+                Color activeForeColor = Color.White;
+                Color inactiveBackColor = Color.FromArgb(240, 240, 240); // Light gray
+                Color inactiveForeColor = Color.FromArgb(100, 100, 100); // Darker gray
+                
+                if (ev.Index == tab.SelectedIndex)
+                {
+                    g.FillRectangle(new SolidBrush(activeBackColor), rect);
+                    TextRenderer.DrawText(g, page.Text, page.Font, rect, activeForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                }
+                else
+                {
+                    g.FillRectangle(new SolidBrush(inactiveBackColor), rect);
+                    TextRenderer.DrawText(g, page.Text, page.Font, rect, inactiveForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                }
+            };
 
-            TabPage tabPrescription = new TabPage("Current Prescription");
+            TabPage tabPrescription = new TabPage("Prescription");
             tabPrescription.BackColor = Color.White;
             
             tabReport = new TabPage("Medical Report");

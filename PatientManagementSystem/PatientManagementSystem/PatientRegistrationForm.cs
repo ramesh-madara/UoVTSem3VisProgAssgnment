@@ -23,6 +23,9 @@ namespace PatientManagementSystem
         {
             InitializeComponent();
             UITheme.ApplyTheme(this);
+            // Override flat style for visibility
+            cmbBloodGroup.FlatStyle = FlatStyle.Standard;
+            cmbGender.FlatStyle = FlatStyle.Standard;
             this.editingPatientId = patientId;
         }
 
@@ -34,7 +37,7 @@ namespace PatientManagementSystem
                 {
                     using (SqlConnection conn = new SqlConnection("Data Source=.\\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;"))
                     {
-                        string query = "SELECT FullName, NIC, ContactNumber, Email, Address, BloodGroup, Gender FROM Patients WHERE PatientId = @ID";
+                        string query = "SELECT FullName, NIC, ContactNumber, Email, Address, BloodGroup, Gender, Age FROM Patients WHERE PatientId = @ID";
                         SqlCommand cmd = new SqlCommand(query, conn);
                         cmd.Parameters.AddWithValue("@ID", editingPatientId);
                         conn.Open();
@@ -49,6 +52,7 @@ namespace PatientManagementSystem
                                 txtAddress.Text = reader["Address"].ToString();
                                 cmbBloodGroup.SelectedItem = reader["BloodGroup"].ToString();
                                 cmbGender.SelectedItem = reader["Gender"].ToString();
+                                txtAge.Text = reader["Age"].ToString();
                                 btnSave.Text = "Update Patient";
                             }
                         }
@@ -70,11 +74,12 @@ namespace PatientManagementSystem
             string address = txtAddress.Text.Trim();
             string bloodGroup = cmbBloodGroup.SelectedItem != null ? cmbBloodGroup.SelectedItem.ToString() : "";
             string gender = cmbGender.SelectedItem != null ? cmbGender.SelectedItem.ToString() : "";
+            string age = txtAge.Text.Trim();
 
             // Validate Empty Fields
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(nic) || string.IsNullOrEmpty(contact) ||
                 string.IsNullOrEmpty(email) || string.IsNullOrEmpty(address) ||
-                string.IsNullOrEmpty(bloodGroup) || string.IsNullOrEmpty(gender))
+                string.IsNullOrEmpty(bloodGroup) || string.IsNullOrEmpty(gender) || string.IsNullOrEmpty(age))
             {
                 new ToastNotification("Please fill all fields before saving the profile.", ToastType.Warning).Show();
                 return;
@@ -109,12 +114,21 @@ namespace PatientManagementSystem
                 return;
             }
 
+            // Age format verification
+            int ageVal;
+            if (!int.TryParse(age, out ageVal) || ageVal < 0 || ageVal > 150)
+            {
+                new ToastNotification("Invalid Age format.", ToastType.Warning).Show();
+                txtAge.Focus();
+                return;
+            }
+
             // INSERT or UPDATE into SQL Server database
             try
             {
                 string query = editingPatientId > 0 
-                    ? "UPDATE Patients SET FullName=@Name, NIC=@NIC, ContactNumber=@Contact, Email=@Email, Address=@Address, BloodGroup=@Blood, Gender=@Gender WHERE PatientId=@ID"
-                    : "INSERT INTO Patients (FullName, NIC, ContactNumber, Email, Address, BloodGroup, Gender) VALUES (@Name, @NIC, @Contact, @Email, @Address, @Blood, @Gender)";
+                    ? "UPDATE Patients SET FullName=@Name, NIC=@NIC, ContactNumber=@Contact, Email=@Email, Address=@Address, BloodGroup=@Blood, Gender=@Gender, Age=@Age WHERE PatientId=@ID"
+                    : "INSERT INTO Patients (FullName, NIC, ContactNumber, Email, Address, BloodGroup, Gender, Age) VALUES (@Name, @NIC, @Contact, @Email, @Address, @Blood, @Gender, @Age)";
 
                 mySqlDataAdapter.InsertCommand = new SqlCommand(query, mySqlConnection);
 
@@ -125,6 +139,7 @@ namespace PatientManagementSystem
                 mySqlDataAdapter.InsertCommand.Parameters.AddWithValue("@Address", address);
                 mySqlDataAdapter.InsertCommand.Parameters.AddWithValue("@Blood", bloodGroup);
                 mySqlDataAdapter.InsertCommand.Parameters.AddWithValue("@Gender", gender);
+                mySqlDataAdapter.InsertCommand.Parameters.AddWithValue("@Age", ageVal);
                 if (editingPatientId > 0)
                     mySqlDataAdapter.InsertCommand.Parameters.AddWithValue("@ID", editingPatientId);
 
@@ -180,9 +195,6 @@ namespace PatientManagementSystem
             ClearFields();
         }
 
-        private void PatientRegistrationForm_Load_1(object sender, EventArgs e)
-        {
 
-        }
     }
 }

@@ -33,6 +33,7 @@ namespace PatientManagementSystem
         private void InitializeComponent()
         {
             this.pnlSidebar = new System.Windows.Forms.Panel();
+            this.btnAbout = new System.Windows.Forms.Button();
             this.btnLogout = new System.Windows.Forms.Button();
             this.btnManageUsers = new System.Windows.Forms.Button();
             this.btnViewHistory = new System.Windows.Forms.Button();
@@ -54,6 +55,7 @@ namespace PatientManagementSystem
             // 
             this.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
             this.pnlSidebar.Controls.Add(this.btnLogout);
+            this.pnlSidebar.Controls.Add(this.btnAbout);
             this.pnlSidebar.Controls.Add(this.btnManageUsers);
             this.pnlSidebar.Controls.Add(this.btnViewHistory);
             this.pnlSidebar.Controls.Add(this.btnAddRecord);
@@ -79,6 +81,21 @@ namespace PatientManagementSystem
             this.btnLogout.Text = "🚪 Logout";
             this.btnLogout.UseVisualStyleBackColor = false;
             this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
+            // 
+            // btnAbout
+            // 
+            this.btnAbout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.btnAbout.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnAbout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAbout.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAbout.ForeColor = System.Drawing.Color.White;
+            this.btnAbout.Location = new System.Drawing.Point(0, 461);
+            this.btnAbout.Name = "btnAbout";
+            this.btnAbout.Size = new System.Drawing.Size(220, 50);
+            this.btnAbout.TabIndex = 5;
+            this.btnAbout.Text = "ℹ️ About";
+            this.btnAbout.UseVisualStyleBackColor = false;
+            this.btnAbout.Click += new System.EventHandler(this.btnAbout_Click);
             // 
             // btnViewHistory
             // 
@@ -169,11 +186,11 @@ namespace PatientManagementSystem
             this.lblClinicTitle.AutoSize = true;
             this.lblClinicTitle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblClinicTitle.ForeColor = System.Drawing.Color.White;
-            this.lblClinicTitle.Location = new System.Drawing.Point(12, 40);
+            this.lblClinicTitle.Location = new System.Drawing.Point(12, 25);
             this.lblClinicTitle.Name = "lblClinicTitle";
-            this.lblClinicTitle.Size = new System.Drawing.Size(193, 20);
+            this.lblClinicTitle.Size = new System.Drawing.Size(193, 40);
             this.lblClinicTitle.TabIndex = 0;
-            this.lblClinicTitle.Text = "🏥 Patient Management System";
+            this.lblClinicTitle.Text = "🏥 ARA Labs\r\nPatient Management System";
             // 
             // pnlFooter
             // 
@@ -251,6 +268,7 @@ namespace PatientManagementSystem
         private System.Windows.Forms.Button btnViewHistory;
         private System.Windows.Forms.Button btnAddRecord;
         private System.Windows.Forms.Button btnManageUsers;
+        private System.Windows.Forms.Button btnAbout;
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.Label lblUserStatus;

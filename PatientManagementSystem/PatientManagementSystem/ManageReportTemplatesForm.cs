@@ -10,9 +10,11 @@ namespace PatientManagementSystem
     {
         private DataGridView dgvTemplates;
         private Button btnAddNew;
+        private string currentUserRole;
 
-        public ManageReportTemplatesForm()
+        public ManageReportTemplatesForm(string role = "Admin")
         {
+            currentUserRole = role;
             this.Text = "Manage Report Templates";
             this.Size = new Size(800, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -49,6 +51,11 @@ namespace PatientManagementSystem
             btnAddNew.FlatAppearance.BorderSize = 0;
             btnAddNew.Click += (s, e) => 
             {
+                if (!currentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("You do not have permission to create templates. Please contact the Admin to get edits done.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 TemplateBuilderModal modal = new TemplateBuilderModal(-1, false);
                 modal.ShowDialog();
                 LoadTemplates();
@@ -154,6 +161,11 @@ namespace PatientManagementSystem
                 string colName = dgvTemplates.Columns[e.ColumnIndex].Name;
                 if (colName == "ViewAction" || colName == "EditAction")
                 {
+                    if (colName == "EditAction" && !currentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show("You do not have permission to edit templates. Please contact the Admin to get edits done.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                     int templateId = Convert.ToInt32(dgvTemplates.Rows[e.RowIndex].Cells["ID"].Value);
                     bool isReadOnly = colName == "ViewAction";
 
@@ -163,6 +175,11 @@ namespace PatientManagementSystem
                 }
                 else if (colName == "DeleteAction")
                 {
+                    if (!currentUserRole.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show("You do not have permission to delete templates. Please contact the Admin to get edits done.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
                     int templateId = Convert.ToInt32(dgvTemplates.Rows[e.RowIndex].Cells["ID"].Value);
                     if (MessageBox.Show("Are you sure you want to delete this template?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {

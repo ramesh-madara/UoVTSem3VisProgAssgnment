@@ -10,16 +10,21 @@ namespace PatientManagementSystem
     {
         private DataGridView dgvPatients;
         private Button btnAddNew;
+        private TextBox txtSearch;
+        private ComboBox cmbFilterGender;
+        private DataTable patientsTable;
+        private DataView patientsView;
 
         public ManagePatientsForm()
         {
             this.Text = "Manage Patients";
-            this.Size = new Size(900, 600);
+            this.Size = new Size(1000, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.White;
 
             InitializeUI();
             UITheme.ApplyTheme(this);
+            cmbFilterGender.FlatStyle = FlatStyle.Standard; // Keep border visible
             LoadPatients();
         }
 
@@ -35,11 +40,37 @@ namespace PatientManagementSystem
             };
             this.Controls.Add(lblHeader);
 
+            txtSearch = new TextBox
+            {
+                Location = new Point(300, 20),
+                Width = 200,
+                Font = new Font("Segoe UI", 12)
+            };
+            // Set Placeholder programmatically for traditional WinForms
+            txtSearch.Text = "Search Name or NIC...";
+            txtSearch.ForeColor = Color.Gray;
+            txtSearch.GotFocus += (s, e) => { if (txtSearch.Text == "Search Name or NIC...") { txtSearch.Text = ""; txtSearch.ForeColor = Color.Black; } };
+            txtSearch.LostFocus += (s, e) => { if (string.IsNullOrWhiteSpace(txtSearch.Text)) { txtSearch.Text = "Search Name or NIC..."; txtSearch.ForeColor = Color.Gray; } };
+            txtSearch.TextChanged += FilterData;
+            this.Controls.Add(txtSearch);
+
+            cmbFilterGender = new ComboBox
+            {
+                Location = new Point(520, 20),
+                Width = 120,
+                Font = new Font("Segoe UI", 12),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+            cmbFilterGender.Items.AddRange(new string[] { "All Genders", "Male", "Female", "Other" });
+            cmbFilterGender.SelectedIndex = 0;
+            cmbFilterGender.SelectedIndexChanged += FilterData;
+            this.Controls.Add(cmbFilterGender);
+
             btnAddNew = new Button
             {
-                Text = "+ Register New Patient",
-                Location = new Point(680, 20),
-                Width = 180,
+                Text = "+ Patient",
+                Location = new Point(840, 20),
+                Width = 120,
                 Height = 35,
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(46, 204, 113),
@@ -60,7 +91,7 @@ namespace PatientManagementSystem
             dgvPatients = new DataGridView
             {
                 Location = new Point(20, 80),
-                Size = new Size(840, 450),
+                Size = new Size(940, 450),
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
                 ReadOnly = true,
@@ -72,8 +103,40 @@ namespace PatientManagementSystem
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
             dgvPatients.CellContentClick += DgvPatients_CellContentClick;
+            dgvPatients.ColumnHeaderMouseClick += DgvPatients_ColumnHeaderMouseClick;
 
             this.Controls.Add(dgvPatients);
+        }
+
+        private void FilterData(object sender, EventArgs e)
+        {
+            if (patientsView == null) return;
+            string search = txtSearch.Text.Trim().Replace("'", "''");
+            string genderFilter = cmbFilterGender.SelectedItem.ToString();
+
+            string filter = "";
+            if (!string.IsNullOrEmpty(search) && search != "Search Name or NIC...")
+            {
+                filter += string.Format("(Name LIKE '%{0}%' OR NIC LIKE '%{0}%')", search);
+            }
+            if (genderFilter != "All Genders")
+            {
+                if (filter.Length > 0) filter += " AND ";
+                filter += string.Format("Gender = '{0}'", genderFilter);
+            }
+            patientsView.RowFilter = filter;
+        }
+
+        private void DgvPatients_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (dgvPatients.Columns[e.ColumnIndex].Name == "Age")
+            {
+                string currentSort = patientsView.Sort;
+                if (currentSort == "Age ASC")
+                    patientsView.Sort = "Age DESC";
+                else
+                    patientsView.Sort = "Age ASC";
+            }
         }
 
         private void LoadPatients()
@@ -82,11 +145,13 @@ namespace PatientManagementSystem
             {
                 using (SqlConnection conn = new SqlConnection(@"Server=.\SQLEXPRESS;Database=medicaldb;Integrated Security=True;"))
                 {
-                    string query = "SELECT PatientId AS 'ID', FullName AS 'Name', NIC, ContactNumber AS 'Contact', Gender FROM Patients";
+                    string query = "SELECT PatientId AS 'ID', FullName AS 'Name', NIC, Age, ContactNumber AS 'Contact', Gender FROM Patients";
                     SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dgvPatients.DataSource = dt;
+                    patientsTable = new DataTable();
+                    da.Fill(patientsTable);
+                    
+                    patientsView = new DataView(patientsTable);
+                    dgvPatients.DataSource = patientsView;
 
                     if (!dgvPatients.Columns.Contains("EditAction"))
                     {
@@ -152,16 +217,9 @@ namespace PatientManagementSystem
                                 LoadPatients();
                             }
                         }
-                        catch (SqlException ex)
-                        {
-                            if (ex.Number == 547) // FK violation
-                                new ToastNotification("Cannot delete patient because they have existing medical records.", ToastType.Error).Show();
-                            else
-                                new ToastNotification("Database error: " + ex.Message, ToastType.Error).Show();
-                        }
                         catch (Exception ex)
                         {
-                            new ToastNotification("Failed to delete patient: " + ex.Message, ToastType.Error).Show();
+                            new ToastNotification("Failed to delete patient. Ensure there are no dependent records.", ToastType.Error).Show();
                         }
                     }
                 }

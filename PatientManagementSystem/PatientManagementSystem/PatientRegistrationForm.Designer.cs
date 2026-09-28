@@ -1,4 +1,4 @@
-﻿namespace PatientManagementSystem
+namespace PatientManagementSystem
 {
     partial class PatientRegistrationForm
     {
@@ -41,10 +41,12 @@
             this.lblAddress = new System.Windows.Forms.Label();
             this.lblBlood = new System.Windows.Forms.Label();
             this.lblGender = new System.Windows.Forms.Label();
+            this.lblAge = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.txtNIC = new System.Windows.Forms.TextBox();
             this.txtContactNumber = new System.Windows.Forms.TextBox();
             this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtAge = new System.Windows.Forms.TextBox();
             this.txtAddress = new System.Windows.Forms.TextBox();
             this.cmbBloodGroup = new System.Windows.Forms.ComboBox();
             this.cmbGender = new System.Windows.Forms.ComboBox();
@@ -141,6 +143,17 @@
             this.lblGender.TabIndex = 7;
             this.lblGender.Text = "Gender *";
             // 
+            // lblAge
+            // 
+            this.lblAge.AutoSize = true;
+            this.lblAge.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAge.Location = new System.Drawing.Point(527, 239);
+            this.lblAge.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAge.Name = "lblAge";
+            this.lblAge.Size = new System.Drawing.Size(53, 23);
+            this.lblAge.TabIndex = 19;
+            this.lblAge.Text = "Age *";
+            // 
             // txtName
             // 
             this.txtName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -174,8 +187,17 @@
             this.txtEmail.Location = new System.Drawing.Point(47, 265);
             this.txtEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(905, 30);
+            this.txtEmail.Size = new System.Drawing.Size(425, 30);
             this.txtEmail.TabIndex = 11;
+            // 
+            // txtAge
+            // 
+            this.txtAge.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtAge.Location = new System.Drawing.Point(527, 265);
+            this.txtAge.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAge.Name = "txtAge";
+            this.txtAge.Size = new System.Drawing.Size(425, 30);
+            this.txtAge.TabIndex = 20;
             // 
             // txtAddress
             // 
@@ -273,12 +295,14 @@
             this.Controls.Add(this.lblEmail);
             this.Controls.Add(this.lblContact);
             this.Controls.Add(this.lblNIC);
+            this.Controls.Add(this.lblAge);
+            this.Controls.Add(this.txtAge);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.lblTitle);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "PatientRegistrationForm";
             this.Text = "Register Patient";
-            this.Load += new System.EventHandler(this.PatientRegistrationForm_Load_1);
+            this.Load += new System.EventHandler(this.PatientRegistrationForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -296,6 +320,8 @@
         private System.Windows.Forms.Label lblGender;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.TextBox txtNIC;
+        private System.Windows.Forms.TextBox txtAge;
+        private System.Windows.Forms.Label lblAge;
         private System.Windows.Forms.TextBox txtContactNumber;
         private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.TextBox txtAddress;
