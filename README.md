@@ -22,12 +22,17 @@ Doctors can securely add diagnoses and prescriptions.
 
 ![Secure Record Entry](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233615.png?raw=true)
 
-### 4. Professional PDF Export
+### 4. Dynamic Medical Reports
+Admins can build custom report templates (e.g., Blood Tests, RT-PCR) by defining specific fields. Doctors can then select a template, and the UI will automatically generate the corresponding input fields on-the-fly. All report data is stored using an Entity-Attribute-Value (EAV) model and encrypted.
+
+![Dynamic Medical Report](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233452.png?raw=true)
+
+### 5. Professional PDF Export
 Staff can click "View Record" to read decrypted details in a beautifully designed popup, and then click **Export PDF** to generate an official, printable document. The generated PDFs feature automated formatting, highlighting, timestamps, and signature lines in a signature sticky-note aesthetic.
 
 ![PDF Preview](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20233522.png?raw=true)
 
-### 5. System Information & UI Polish
+### 6. System Information & UI Polish
 The application was built with a strict adherence to a modern flat UI design, doing away with outdated 3D borders for a crisp, responsive, and professional user experience. 
 
 ![About System](https://github.com/ramesh-madara/UoVTSem3VisProgAssgnment/blob/main/Screenshots/Screenshot%202026-09-28%20234951.png?raw=true)
