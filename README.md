@@ -22,7 +22,13 @@ To run this project on your local machine, please follow these steps:
    - **Doctor:** Username: `doctor` | Password: `doctor123`
 5. *(Optional)* You can execute the other `.sql` scripts inside the `SQL/` folder to populate the database with sample mock data.
 
-### 3. Running the Application
+### 3. Database Connection Configuration
+1. The application is pre-configured to connect to a local SQL Server Express instance using Windows Authentication.
+2. The connection string used across the application is:  
+   `"Data Source=.\SQLEXPRESS;Initial Catalog=medicaldb;Integrated Security=True;"`
+3. **Important:** If your local SQL Server instance has a different name (e.g., `localhost`, `.\MSSQLSERVER`, or `(localdb)\MSSQLLocalDB`), you will need to open the solution in Visual Studio, press `Ctrl + Shift + F` (Find and Replace), and globally replace `.\SQLEXPRESS` with your specific server name across all `.cs` files before running the application.
+
+### 4. Running the Application
 1. Open the solution file `PatientManagementSystem.sln` in Visual Studio.
 2. The project automatically references **iTextSharp** (ensure you restore NuGet packages if prompted).
 3. Press **Start** (or `F5`) to compile and launch the application.
